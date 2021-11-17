@@ -1,0 +1,42 @@
+
+.condicao-em-dia, .condicao-atrasada {
+  font-weight: bold;
+}
+
+.condicao-em-dia {
+  color: green;
+}
+
+.condicao-atrasada {
+  color: red;
+}
+
+.btn-adicionar {
+  position: absolute;
+  right: 0;
+  margin: 15px;
+}
+
+.tit-btn-adicionar:before {
+  content: 'Adicionar';
+}
+
+#root {
+  min-height: inherit;
+}
+
+.card-login {
+  margin-top: 22%;
+}
+
+.login-background {
+  background: url('../img/mineracao.jpg') no-repeat;
+  min-height: inherit;
+  background-size: cover;
+}
+
+@media only screen and (max-width: 500px) {
+  .tit-btn-adicionar:before {
+    content: '+';
+  }
+}
