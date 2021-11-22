@@ -1,33 +1,24 @@
-import React, { useState, useEffect } from "react";
-import axios from 'axios';
+import React, { useState } from "react";
 import deepcopy from "deepcopy";
 import { Redirect } from 'react-router';
 
 import FormAgendamentos from 'components/Ativos/FormAgendamentos.js';
 import FormDadosGerais from 'components/Ativos/FormDadosGerais.js';
-import FormParametros from 'components/Ativos/FormParametros.js';
 
 import { adicionarAtivo } from './AtivoServices.js';
 
-// react-bootstrap components
-import {
-  Badge,
-  Button,
-  Card,
-  Form,
-  Navbar,
-  Nav,
-  Container,
-  Row,
-  Col,
-  Tabs,
-  Tab
-} from "react-bootstrap";
+import { Button, Card, Form, Container, Row, Col, Tabs, Tab, Table } from "react-bootstrap";
+import { Alert } from 'reactstrap';
 
 const EditAtivos = (props) => {
 
+  const acao = props.match.params.acao;
+
   const [redirecionar, setRedirecionar] = useState(false);
-  const [parametros, setParametros] = useState([]);
+  const [exibirErro, setExibirErro] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const fecharErro = () => { setExibirErro(false) };
+  
   const [ativo, setAtivo] = useState(() => {
     return {
       codigo: props.codigo ? props.ativo.codigo : '',
@@ -37,10 +28,43 @@ const EditAtivos = (props) => {
       valorInicial: props.valorInicial ? props.ativo.valorInicial : '',
       valorAtual: props.valorAtual ? props.ativo.valorAtual : '',
       ativo: props.ativoStatus ? props.ativo.ativoStatus : '',
-      dataCadastro: props.dataCadastro ? props.ativo.dataCadastro : ''
+      dataCadastro: props.dataCadastro ? props.ativo.dataCadastro : '',
+      parametros: props.parametros ? props.ativo.parametros : []
     }
   });
-  const acao = props.match.params.acao;
+  const [listagemParametros, setListagemParametros] = useState(() => {
+    return {
+      params: props.params ? props.parametros.params : [],
+      vazia: props.vazia ? props.parametros.vazia : true
+    }
+  });
+  const [parametroEdicao, setParametroEdicao] = useState(() => {
+    return {
+      nome: props.nome ? props.parametroEdicao.nome : '',
+      descricao: props.descricao ? props.parametroEdicao.descricao : '',
+      valor: props.valor ? props.parametroEdicao.valor : ''
+    }
+  });
+
+  const handleNovoParam = e => {
+    e.preventDefault();
+    const allFieldsFilled = [parametroEdicao.nome, parametroEdicao.valor].every((field) => {
+      const value = `${field}`.trim();
+      return value !== '' && value !== '0';
+    });
+    if (allFieldsFilled) {
+      let parametrosNovo = deepcopy(listagemParametros.params);
+      parametrosNovo.push(parametroEdicao);
+      setListagemParametros((prevState) => ({
+        params: parametrosNovo,
+        vazia: false
+      }));
+      setExibirErro(false);
+    } else {
+      setErrorMsg('Nome e valor são obrigatórios');
+      setExibirErro(true);
+    }
+  }
 
   const handleOnSubmit = (event) => {
     event.preventDefault();
@@ -58,6 +82,9 @@ const EditAtivos = (props) => {
       ativoDto.intervalo = ativoDto.intervalo.value;
       delete ativoDto.ativo;
       delete ativoDto.dataCadastro;
+      if (!listagemParametros.vazia) {
+        ativoDto.parametros = listagemParametros.params;
+      }
       
       adicionarAtivo(ativoDto)
         .then(res => {
@@ -72,8 +99,25 @@ const EditAtivos = (props) => {
       errorMsg = 'Please fill out all the fields.';
       console.warn(errorMsg, ativo);
     }
-    
   };
+
+  const getListagemParams = (listParams) => {
+    return listParams.map(item => {
+      return (
+        <tr key='{item.nome}'>
+          <td>{item.nome}</td>
+          <td>{item.descricao}</td>
+          <td>{item.valor}</td>
+          <td>
+            <div>
+              <Button variant="danger" size="sm" onClick={() => this.deleteItem()}>Apagar</Button>
+            </div>
+          </td>
+        </tr>
+      )
+    })
+  };
+
   if (redirecionar) {
     return <Redirect to='/admin/ativos'/>;
   } else {
@@ -91,13 +135,79 @@ const EditAtivos = (props) => {
                   )}
                 </Card.Header>
                 <Card.Body>
+                  <Row>
+                    <Col className="pr-1" md="12">
+                      <Alert 
+                        color="danger"
+                        isOpen={exibirErro}
+                        toggle={fecharErro}>
+                        <span>{errorMsg}</span>
+                      </Alert>
+                    </Col>
+                  </Row>
                   <Form onSubmit={handleOnSubmit}>
                     <Tabs id="uncontrolled-tab-example" className="mb-3">
                       <Tab eventKey="gerais" title="Ativo">
                         <FormDadosGerais {...props} setAtivo={setAtivo} ativo={ativo} />
                       </Tab>
                       <Tab eventKey="parametros" title="Parâmetros">
-                        <FormParametros {...props} parametros={parametros} />
+                        <Row>
+                          <Col className="pr-1" md="3">
+                            <Form.Group>
+                              <label>Nome</label>
+                              <Form.Control
+                                placeholder="Nome do parâmetro"
+                                type="text"
+                                onChange={e => setParametroEdicao((prevState) => ({
+                                  ...prevState, nome: e.target.value}))}
+                              ></Form.Control>
+                            </Form.Group>
+                          </Col>
+                          <Col className="px-1" md="5">
+                            <Form.Group>
+                              <label>Descrição</label>
+                              <Form.Control
+                                placeholder="Descrição do parâmetro"
+                                type="text"
+                                onChange={e => setParametroEdicao((prevState) => ({
+                                  ...prevState, descricao: e.target.value}))}
+                              ></Form.Control>
+                            </Form.Group>
+                          </Col>
+                          <Col className="pl-1" md="3">
+                            <Form.Group>
+                              <label>Valor</label>
+                              <Form.Control
+                                placeholder="Valor do parâmetro"
+                                type="text"
+                                onChange={e => setParametroEdicao((prevState) => ({
+                                  ...prevState, valor: e.target.value}))}
+                              ></Form.Control>
+                            </Form.Group>
+                          </Col>
+                          <Col className="" md="1">
+                            <Button variant="secondary" size="sm" onClick={handleNovoParam}>Adicionar</Button>
+                          </Col>
+                        </Row>
+                        <Row>
+                          {!listagemParametros.vazia ? (
+                            <Table className="table-hover table-striped">
+                              <thead>
+                                <tr>
+                                  <th className="border-0">Nome</th>
+                                  <th className="border-0">Descrição</th>
+                                  <th className="border-0">Valor</th>
+                                  <th className="border-0">Ação</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                { getListagemParams(listagemParametros.params) }
+                              </tbody>
+                            </Table>
+                          ) : (
+                            <p className="message">Não há parâmetros cadastrados.</p>
+                          )}
+                        </Row>
                       </Tab>
                       {acao != 'novo' &&
                         <Tab eventKey="manutencoes" title="Manutenções">

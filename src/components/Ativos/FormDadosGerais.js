@@ -1,21 +1,12 @@
-import React, { useState }  from "react";
+import React  from "react";
 
 import Select from 'react-select';
 
 // react-bootstrap components
-import {
-  Badge,
-  Button,
-  Card,
-  Form,
-  Navbar,
-  Nav,
-  Container,
-  Row,
-  Col,
-} from "react-bootstrap";
+import { Form, Row, Col } from "react-bootstrap";
 
 const FormDadosGerais = (props, ativo) => {
+
   const opcoesCategoria = [
     { name: 'categoria', value: 'MAQUINA', label: 'Máquina' },
     { name: 'categoria', value: 'EQUIPAMENTO', label: 'Equipamento' },

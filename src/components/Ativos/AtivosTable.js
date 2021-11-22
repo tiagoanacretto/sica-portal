@@ -1,26 +1,34 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import { Redirect } from 'react-router';
+import { Button, Table, Modal } from "react-bootstrap";
+import _ from 'lodash';
 
-import {
-  Button,
-  Table,
-  Modal
-} from "react-bootstrap";
+import { deleteAtivo } from './AtivoServices.js';
+import { buscarAtivos } from "../components/Ativos/AtivoServices.js";
 
 function Ativos({listagemAtivos}) {
   const [showModalConfirmacao, setShowModalConfirmacao] = useState(false);
   const [idAtivoDelete, setIdAtivoDelete] = useState(null);
   const [redirecionar, setRedirecionar] = useState(false);
 
-  const confirmaRemocao = (idAtivoDelete) => {
-    const url = `http://localhost:8080/api/ativos/${idAtivoDelete}`;
+  const [listaAtivos, setListaAtivos] = useState([]);
 
-    axios
-      .delete(url)
+  useEffect(async () => {
+    const fetchData = async () => {
+      const result = await buscarAtivos();
+      setListaAtivos(result.data);
+    };
+    fetchData();
+  }, []);
+
+
+  const confirmaRemocao = (idAtivoDelete) => {
+    deleteAtivo(idAtivoDelete)
       .then(res => {
         setShowModalConfirmacao(false);
-        setRedirecionar(true);
+
+        setUsers(users => users.filter(x => x.id !== id));
+
       })
       .catch(err => {
         console.log(err);
@@ -44,7 +52,7 @@ function Ativos({listagemAtivos}) {
           <td>{item.proximaManutencao}</td>
           <td>
             <div>
-              <Button variant="secondary" size="sm" onClick={() => this.deleteAtivo(item.id)}>Editar</Button>
+              <Button variant="secondary" size="sm" onClick={() => this.editarAtivo(item.id)}>Editar</Button>
               {' '}
               <Button variant="danger" size="sm" onClick={() => {setShowModalConfirmacao(true); setIdAtivoDelete(item.id)}}>Apagar</Button>
             </div>
@@ -53,6 +61,11 @@ function Ativos({listagemAtivos}) {
       )
     })
   }
+
+  {!_.isEmpty(listaAtivos) ? (
+    ) : (
+      <p className="message">Não há ativos cadastrados.</p>
+    )}
 
   if (redirecionar) {
     return <Redirect to='/admin/ativos'/>;

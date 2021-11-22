@@ -1,20 +1,35 @@
 import { getToken } from '../../services/Auth.js';
 import axios from 'axios';
 
-const request_config = {
-  headers: {
-    'Authorization': `Bearer ${getToken()}`
-  }
-};
-
 export const buscarAtivos = async () => {
+  const request_config = {
+    headers: {
+      'Authorization': `Bearer ${getToken()}`
+    }
+  }
+  const url = `${process.env.REACT_APP_ATIVOS_SERVICE_URL}/api/ativos`
   return axios.get(
-    'http://localhost:8080/api/ativos',
+    url,
     request_config
   );
 }
 
 export const adicionarAtivo = async (ativo) => {
-  const url = `http://localhost:8080/api/ativos`;
+  const request_config = {
+    headers: {
+      'Authorization': `Bearer ${getToken()}`
+    }
+  }
+  const url = `${process.env.REACT_APP_ATIVOS_SERVICE_URL}/api/ativos`
   return axios.post(url, ativo, request_config);
+}
+
+export const deleteAtivo = async (idAtivo) => {
+  const request_config = {
+    headers: {
+      'Authorization': `Bearer ${getToken()}`
+    }
+  }
+  const url = `${process.env.REACT_APP_ATIVOS_SERVICE_URL}/api/ativos/${idAtivo}`;
+  return axios.delete(url, request_config);
 }
