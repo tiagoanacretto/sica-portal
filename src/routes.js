@@ -33,7 +33,7 @@ const dashboardRoutes = [
     icon: "nc-icon nc-settings-tool-66",
     component: Manutencao,
     layout: "/admin",
-    exactRoute: true,
+
   },
 ];
 

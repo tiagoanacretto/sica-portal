@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
-import { Card, Container, Row, Col, Button, Table, Modal } from "react-bootstrap";
+import { Card, Container, Row, Col, Button, Table } from "react-bootstrap";
 
 import { buscarTodos } from "./ManutencaoServices.js";
 
@@ -57,7 +57,7 @@ function ListManutencoes() {
                         <td>{item.responsavel}</td>
                         <td>
                           <div>
-                            <Link to={`/admin/ativos/${item.id}`}>
+                            <Link to={`/admin/manutencao/editar/${item.id}`}>
                               <Button variant="secondary" size="sm">Editar</Button>
                             </Link>
                             {' '}

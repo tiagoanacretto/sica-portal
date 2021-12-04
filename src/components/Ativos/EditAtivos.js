@@ -21,8 +21,6 @@ const EditAtivos = (props) => {
   const fecharErro = () => { setExibirErro(false) };
   
   const [ativo, setAtivo] = useState(() => {
-    alert('props.codigo: ' + props.codigo);
-    
     return {
       codigo: props.codigo ? props.ativo.codigo : '',
       descricao: props.descricao ? props.ativo.descricao : '',
@@ -83,7 +81,6 @@ const EditAtivos = (props) => {
   const handleOnSubmit = (event) => {
     event.preventDefault();
     const values = [ativo.codigo, ativo.descricao, ativo.categoria, ativo.intervalo, ativo.valorInicial];
-    let errorMsg = '';
 
     const allFieldsFilled = values.every((field) => {
       const value = `${field}`.trim();
@@ -241,7 +238,7 @@ const EditAtivos = (props) => {
                       className="btn-fill pull-right"
                       type="submit"
                       variant="info">
-                      Adicionar
+                      Salvar
                     </Button>
                     <div className="clearfix"></div>
                   </Form>
