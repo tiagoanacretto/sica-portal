@@ -22,6 +22,8 @@ const FormDadosGerais = (props, ativo) => {
     { name: 'intervalo', value: 'ANUAL', label: 'Anual' }
   ];
 
+  alert('formdadosgerais: ' + ativo.codigo);
+
   const { codigo, descricao, categoria, intervalo, valorInicial, valorAtual, ativoStatus, dataCadastro } =  { ativo } ;
 
   const handleInputChange = (event) => {

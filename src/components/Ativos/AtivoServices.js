@@ -14,6 +14,19 @@ export const buscarAtivos = async () => {
   );
 }
 
+export const buscarAtivoPorId = async (idAtivo) => {
+  const request_config = {
+    headers: {
+      'Authorization': `Bearer ${getToken()}`
+    }
+  }
+  const url = `${process.env.REACT_APP_ATIVOS_SERVICE_URL}/api/ativos/${idAtivo}`
+  return axios.get(
+    url,
+    request_config
+  );
+}
+
 export const adicionarAtivo = async (ativo) => {
   const request_config = {
     headers: {

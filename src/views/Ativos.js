@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import _ from 'lodash';
-import {Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { buscarAtivos, deleteAtivo } from "../components/Ativos/AtivoServices.js";
 
@@ -50,7 +50,9 @@ function Ativos() {
           <td>{item.proximaManutencao}</td>
           <td>
             <div>
-              <Button variant="secondary" size="sm" onClick={() => this.editarAtivo(item.id)}>Editar</Button>
+              <Link to={`/admin/ativos/${item.id}`}>
+                <Button variant="secondary" size="sm">Editar</Button>
+              </Link>
               {' '}
               <Button variant="danger" size="sm" onClick={() => {setShowModalConfirmacao(true); setIdAtivoDelete(item.id)}}>Apagar</Button>
             </div>

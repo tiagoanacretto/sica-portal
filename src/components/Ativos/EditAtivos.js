@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import deepcopy from "deepcopy";
 import { Redirect } from 'react-router';
+import { Link } from "react-router-dom";
 
 import FormAgendamentos from 'components/Ativos/FormAgendamentos.js';
 import FormDadosGerais from 'components/Ativos/FormDadosGerais.js';
 
-import { adicionarAtivo } from './AtivoServices.js';
+import { adicionarAtivo, buscarAtivoPorId } from './AtivoServices.js';
 
 import { Button, Card, Form, Container, Row, Col, Tabs, Tab, Table } from "react-bootstrap";
 import { Alert } from 'reactstrap';
@@ -20,6 +21,8 @@ const EditAtivos = (props) => {
   const fecharErro = () => { setExibirErro(false) };
   
   const [ativo, setAtivo] = useState(() => {
+    alert('props.codigo: ' + props.codigo);
+    
     return {
       codigo: props.codigo ? props.ativo.codigo : '',
       descricao: props.descricao ? props.ativo.descricao : '',
@@ -45,6 +48,17 @@ const EditAtivos = (props) => {
       valor: props.valor ? props.parametroEdicao.valor : ''
     }
   });
+
+  useEffect(() => {
+    if (acao != 'novo') {
+        buscarAtivoPorId(acao).then(ativoBd => {
+            //const fields = ['title', 'firstName', 'lastName', 'email', 'role'];
+            //fields.forEach(field => setValue(field, user[field]));
+            alert(ativoBd.data);
+            setAtivo(ativoBd.data);
+        });
+    }
+  }, []);
 
   const handleNovoParam = e => {
     e.preventDefault();
@@ -96,8 +110,8 @@ const EditAtivos = (props) => {
           alert('Falha ao apagar');
         });
     } else {
-      errorMsg = 'Please fill out all the fields.';
-      console.warn(errorMsg, ativo);
+      setErrorMsg('Código, descrição, categoria, intervalo e valor inicial são obrigatórios');
+      setExibirErro(true);
     }
   };
 
@@ -215,12 +229,14 @@ const EditAtivos = (props) => {
                         </Tab>
                       }
                     </Tabs>
-                    <Button
-                      className="btn-fill pull-right"
-                      type="submit"
-                      variant="info">
-                      Voltar
-                    </Button>
+                    <Link to="/admin/ativos/">
+                      <Button
+                        className="btn-fill pull-right"
+                        type="submit"
+                        variant="info">
+                        Voltar
+                      </Button>
+                    </Link>
                     <Button
                       className="btn-fill pull-right"
                       type="submit"
