@@ -1,12 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
-import { Card, Container, Row, Col, Button, Table } from "react-bootstrap";
+import { Card, Container, Row, Col, Button, Table, Modal } from "react-bootstrap";
+import { Alert } from 'reactstrap';
 
-import { buscarTodos } from "./ManutencaoServices.js";
+import { buscarTodos, apagar } from "./ManutencaoServices.js";
 
 function ListManutencoes() {
 
   const [manutencoes, setManutencoes] = useState([]);
+  const [showModalConfirmacao, setShowModalConfirmacao] = useState(false);
+  const [idApagar, setIdApagar] = useState(null);
+
+  const [mensagem, setMensagem] = useState(() => {
+    return {
+      exibir: false,
+      mensagem: '',
+      icone: 'danger'
+    }
+  })
+  const fecharErro = () => { setMensagem({exibir:false}) };
 
   useEffect(async () => {
     const fetchData = async () => {
@@ -15,6 +27,20 @@ function ListManutencoes() {
     };
     fetchData();
   }, []);
+
+  const confirmaRemocao = (idApagar) => {
+    apagar(idApagar)
+      .then(res => {
+        setShowModalConfirmacao(false);
+        setManutencoes(listaManutencao => listaManutencao.filter(x => x.id !== idApagar));
+        setMensagem({exibir: true, mensagem: `Item ${idApagar} apagado com sucesso`, icone: 'success'});
+      })
+      .catch(err => {
+        console.error(err);
+        setShowModalConfirmacao(false);
+        setMensagem({exibir: true, mensagem: `Erro ao apagar item ${idApagar}`, icone: 'danger'});
+      });
+  };
 
   return (
     <>
@@ -37,6 +63,16 @@ function ListManutencoes() {
                 </p>
               </Card.Header>
               <Card.Body className="table-full-width table-responsive px-0">
+                <Row>
+                  <Col className="pr-1" md="12">
+                    <Alert 
+                      color={mensagem.icone}
+                      isOpen={mensagem.exibir}
+                      toggle={fecharErro}>
+                      <span>{mensagem.mensagem}</span>
+                    </Alert>
+                  </Col>
+                </Row>
                 {!_.isEmpty(manutencoes) ? (
                   <Table className="table-hover table-striped">
                   <thead>
@@ -61,7 +97,7 @@ function ListManutencoes() {
                               <Button variant="secondary" size="sm">Editar</Button>
                             </Link>
                             {' '}
-                            <Button variant="danger" size="sm">Apagar</Button>
+                            <Button variant="danger" size="sm" onClick={() => {setShowModalConfirmacao(true); setIdApagar(item.id)}}>Apagar</Button>
                           </div>
                         </td>
                       </tr>
@@ -76,6 +112,34 @@ function ListManutencoes() {
           </Col>
         </Row>
       </Container>
+      <Modal
+        className="modal-primary"
+        show={showModalConfirmacao}
+        onHide={() => setShowModalConfirmacao(false)}
+      >
+        <Modal.Header className="justify-content-center">
+          <div className="modal-profile">
+            <i className="nc-icon nc-bulb-63"></i>
+          </div>
+        </Modal.Header>
+        <Modal.Body className="text-center">
+          <p>Deseja realmente apagar o item {idApagar}?</p>
+        </Modal.Body>
+        <div className="modal-footer">
+          <Button
+            variant="danger" size="sm"
+            onClick={() => setShowModalConfirmacao(false)}
+          >
+            Não
+          </Button>
+          <Button
+            variant="success" size="sm"
+            onClick={() => confirmaRemocao(idApagar)}
+          >
+            Sim
+          </Button>
+        </div>
+      </Modal>
     </>
   );
 }

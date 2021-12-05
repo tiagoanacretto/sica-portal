@@ -37,5 +37,15 @@ export const buscarPorId = async (idManutencao) => {
   return axios.get(
     url,
     request_config
-  );
+  ); 
+}
+
+export const apagar = async (idManutencao) => {
+  const request_config = {
+    headers: {
+      'Authorization': `Bearer ${getToken()}`
+    }
+  }
+  const url = `${process.env.REACT_APP_ATIVOS_SERVICE_URL}/api/manutencoes/${idManutencao}`;
+  return axios.delete(url, request_config);
 }
