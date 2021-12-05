@@ -35,6 +35,26 @@
   background-size: cover;
 }
 
+.btns-modal {
+  margin: 0px 135px;
+}
+
+.no-margin {
+  margin: 0px;
+}
+
+.direita {
+  text-align: right;
+}
+
+.separador {
+  padding: 5px;
+}
+
+.alert-success {
+  background-color: #699b18;
+}
+
 @media only screen and (max-width: 500px) {
   .tit-btn-adicionar:before {
     content: '+';

@@ -5,11 +5,12 @@ import { Alert } from 'reactstrap';
 
 import { buscarTodos, apagar } from "./ManutencaoServices.js";
 
-function ListManutencoes() {
+function ListManutencoes(props) {
 
   const [manutencoes, setManutencoes] = useState([]);
   const [showModalConfirmacao, setShowModalConfirmacao] = useState(false);
   const [idApagar, setIdApagar] = useState(null);
+  const { id } = props.match.params;
 
   const [mensagem, setMensagem] = useState(() => {
     return {
@@ -24,6 +25,9 @@ function ListManutencoes() {
     const fetchData = async () => {
       const result = await buscarTodos();
       setManutencoes(result.data);
+      if (id) {
+        setMensagem({exibir: true, mensagem: `Item ${id} salvo com sucesso`, icone: 'success'});
+      }
     };
     fetchData();
   }, []);
@@ -63,8 +67,8 @@ function ListManutencoes() {
                 </p>
               </Card.Header>
               <Card.Body className="table-full-width table-responsive px-0">
-                <Row>
-                  <Col className="pr-1" md="12">
+                <Row className="no-margin">
+                  <Col md="12">
                     <Alert 
                       color={mensagem.icone}
                       isOpen={mensagem.exibir}
@@ -125,17 +129,15 @@ function ListManutencoes() {
         <Modal.Body className="text-center">
           <p>Deseja realmente apagar o item {idApagar}?</p>
         </Modal.Body>
-        <div className="modal-footer">
+        <div className="modal-footer btns-modal">
           <Button
             variant="danger" size="sm"
-            onClick={() => setShowModalConfirmacao(false)}
-          >
+            onClick={() => setShowModalConfirmacao(false)}>
             Não
           </Button>
           <Button
             variant="success" size="sm"
-            onClick={() => confirmaRemocao(idApagar)}
-          >
+            onClick={() => confirmaRemocao(idApagar)}>
             Sim
           </Button>
         </div>

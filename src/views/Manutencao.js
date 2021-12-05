@@ -9,6 +9,7 @@ function Manutencao({ match }) {
     return (
         <Switch>
             <Route exact path={path} component={ListManutencoes} />
+            <Route path={`${path}/msg/:id`} component={ListManutencoes} />
             <Route path={`${path}/novo`} component={AddManutencao} />
             <Route path={`${path}/editar/:id`} component={AddManutencao} />
         </Switch>

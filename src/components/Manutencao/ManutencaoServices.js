@@ -49,3 +49,14 @@ export const apagar = async (idManutencao) => {
   const url = `${process.env.REACT_APP_ATIVOS_SERVICE_URL}/api/manutencoes/${idManutencao}`;
   return axios.delete(url, request_config);
 }
+
+export const alterar = async (manutencao) => {
+  const request_config = {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${getToken()}`
+    }
+  }
+  const url = `${process.env.REACT_APP_ATIVOS_SERVICE_URL}/api/manutencoes/${manutencao.id}`
+  return axios.put(url, manutencao, request_config);
+}

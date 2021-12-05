@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Card, Container, Row, Col, Button, Form } from "react-bootstrap";
 import { Alert } from 'reactstrap';
 
-import { adicionar, buscarPorId } from "./ManutencaoServices.js";
+import { adicionar, buscarPorId, alterar } from "./ManutencaoServices.js";
 
 function AddManutencao(props) {
 
@@ -44,15 +44,27 @@ function AddManutencao(props) {
         delete manutencao.agendamento;
       }
       
-      adicionar(manutencao)
-        .then(res => {
-          history.push('.');
-        })
-        .catch(err => {
-          console.error(err);
-          setErrorMsg('Falha ao incluir Manutenção. Contate o administrador');
-          setExibirErro(true);
-        });
+      if (isAcaoNovo) {
+        adicionar(manutencao)
+          .then(res => {
+            history.push(`./msg/${res.data.id}`);
+          })
+          .catch(err => {
+            console.error(err);
+            setErrorMsg('Falha ao incluir Manutenção. Contate o administrador');
+            setExibirErro(true);
+          });
+      } else {
+        alterar(manutencao)
+          .then(res => {
+            history.push(`../msg/${res.data.id}`);
+          })
+          .catch(err => {
+            console.error(err);
+            setErrorMsg('Falha ao alterar Manutenção. Contate o administrador');
+            setExibirErro(true);
+          });
+      }
     } else {
       setErrorMsg('Todos os campos são obrigatórios');
       setExibirErro(true);
@@ -90,7 +102,7 @@ function AddManutencao(props) {
             </Card.Header>
             <Card.Body>
               <Row>
-                <Col className="pr-1" md="12">
+                <Col md="12">
                   <Alert 
                     color="danger"
                     isOpen={exibirErro}
@@ -101,6 +113,18 @@ function AddManutencao(props) {
               </Row>
               <Form onSubmit={handleOnSubmit}>
                 <Row>
+                  {!isAcaoNovo &&
+                    <Col className="pr-1" md="1">
+                      <Form.Group>
+                        <label>Id</label>
+                        <Form.Control
+                          type="text"
+                          value={manutencao.id}
+                          readOnly
+                        ></Form.Control>
+                      </Form.Group>
+                    </Col>
+                  }
                   <Col className="pr-1" md="5">
                     <Form.Group>
                       <label>Ativo</label>
@@ -112,7 +136,7 @@ function AddManutencao(props) {
                       ></Form.Control>
                     </Form.Group>
                   </Col>
-                  <Col className="px-1" md="3">
+                  <Col className="pr-1" md="3">
                     <Form.Group>
                       <label>Data Manutenção</label>
                       <Form.Control
@@ -153,7 +177,7 @@ function AddManutencao(props) {
                     <Form.Group>
                       <label>Observação</label>
                       <Form.Control
-                        type="text"
+                        as="textarea"
                         value={manutencao.observacao}
                         onChange={e => setManutencao((prevState) => ({
                           ...prevState, observacao: e.target.value}))}
@@ -161,20 +185,25 @@ function AddManutencao(props) {
                     </Form.Group>
                   </Col>
                 </Row>
-                <Link to="/admin/manutencao/">
-                  <Button
-                    className="btn-fill pull-right"
-                    type="submit"
-                    variant="info">
-                    Voltar
-                  </Button>
-                </Link>
-                <Button
-                  className="btn-fill pull-right"
-                  type="submit"
-                  variant="info">
-                  Salvar
-                </Button>
+                <Row>
+                  <Col className="direita">
+                    <Link to="/admin/manutencao/">
+                      <Button
+                        className="btn-fill pull-right"
+                        type="submit"
+                        variant="primary">
+                        Voltar
+                      </Button>
+                    </Link>
+                    <span className="separador"/>
+                    <Button
+                      className="btn-fill pull-right"
+                      type="submit"
+                      variant="primary">
+                      Salvar
+                    </Button>
+                  </Col>
+                </Row>
                 <div className="clearfix"></div>
               </Form>
             </Card.Body>
