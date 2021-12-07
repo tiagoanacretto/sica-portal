@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { Card, Container, Row, Col, Button, Form } from "react-bootstrap";
 import { Alert } from 'reactstrap';
+import Select from 'react-select';
 
 import { adicionar, buscarPorId, alterar } from "./ManutencaoServices.js";
+import { buscarAtivos } from "../Ativos/AtivoServices.js";
 
 function AddManutencao(props) {
 
@@ -14,6 +16,9 @@ function AddManutencao(props) {
   const [exibirErro, setExibirErro] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const fecharErro = () => { setExibirErro(false) };
+  const [ativoSelecionado, setAtivoSelecionado] = useState({});
+
+  const [opcoesAtivo, setOpcoesAtivo] = useState([]);
 
   const [manutencao, setManutencao] = useState(() => {
     return {
@@ -71,6 +76,24 @@ function AddManutencao(props) {
     }
   };
 
+  const handleAtivo = (event) => {
+    setAtivoSelecionado(event);
+    setManutencao((prevState) => ({
+      ...prevState, ativo: event.value}))
+  }
+
+  const carregarSelectAtivos = async (idAtivo) => {
+    const result = await buscarAtivos();
+    setOpcoesAtivo(
+      result.data.map(ativo => {
+        const itemAtivo = { name: 'ativo', value: ativo.id, label: `${ativo.codigo} - ${ativo.descricao}`}
+        if (ativo.id == idAtivo) {
+          setAtivoSelecionado(itemAtivo)
+        }
+        return itemAtivo
+      })
+    )
+  };
 
   useEffect(async () => {
     const fetchData = async () => {
@@ -86,7 +109,10 @@ function AddManutencao(props) {
               observacao: manutencao.data.observacao
             }
             setManutencao(localmanute);
+            carregarSelectAtivos(localmanute.ativo);
           });
+      } else {
+        carregarSelectAtivos(null);
       }
     };
     fetchData();
@@ -125,15 +151,12 @@ function AddManutencao(props) {
                       </Form.Group>
                     </Col>
                   }
-                  <Col className="pr-1" md="5">
+                  <Col className="pl-1" md="4">
                     <Form.Group>
                       <label>Ativo</label>
-                      <Form.Control
-                        type="text"
-                        value={manutencao.ativo}
-                        onChange={e => setManutencao((prevState) => ({
-                          ...prevState, ativo: e.target.value}))}
-                      ></Form.Control>
+                      <Select options={opcoesAtivo} 
+                        value={ativoSelecionado}
+                        onChange={handleAtivo}/>
                     </Form.Group>
                   </Col>
                   <Col className="pr-1" md="3">
