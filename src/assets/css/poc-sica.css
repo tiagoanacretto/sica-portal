@@ -55,6 +55,15 @@
   background-color: #699b18;
 }
 
+.tab-ativos {
+  border: 1px solid transparent;
+  border-color: #fff #fff #dee2e6 #fff;
+}
+
+.botao-tab {
+  margin-top: 32px;
+}
+
 @media only screen and (max-width: 500px) {
   .tit-btn-adicionar:before {
     content: '+';

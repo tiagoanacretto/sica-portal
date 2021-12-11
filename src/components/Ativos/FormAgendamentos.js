@@ -36,7 +36,7 @@ function FormAgendamentos() {
             ></Form.Control>
           </Form.Group>
         </Col>
-        <Col className="px-1" md="2">
+        <Col className="pr-1" md="2">
           <Form.Group>
             <label>Data Realizada</label>
             <Form.Control
@@ -45,13 +45,13 @@ function FormAgendamentos() {
             ></Form.Control>
           </Form.Group>
         </Col>
-        <Col className="pl-1" md="2">
+        <Col className="pr-1" md="2">
           <Form.Group>
             <label>Status</label>
             <Select options={opcoesStatus} />
           </Form.Group>
         </Col>
-        <Col className="pl-1" md="3">
+        <Col className="pr-1" md="3">
           <Form.Group>
             <label>Observação</label>
             <Form.Control

@@ -7,6 +7,9 @@ import { Form, Row, Col } from "react-bootstrap";
 
 const FormDadosGerais = (props, ativo) => {
 
+  const { id } = props.match.params;
+  const isAcaoNovo = !id;
+
   const opcoesCategoria = [
     { name: 'categoria', value: 'MAQUINA', label: 'Máquina' },
     { name: 'categoria', value: 'EQUIPAMENTO', label: 'Equipamento' },
@@ -19,10 +22,12 @@ const FormDadosGerais = (props, ativo) => {
   const opcoesIntervalo = [
     { name: 'intervalo', value: 'DIARIO', label: 'Diário' },
     { name: 'intervalo', value: 'MENSAL', label: 'Mensal' },
-    { name: 'intervalo', value: 'ANUAL', label: 'Anual' }
+    { name: 'intervalo', value: 'ANUAL', label: 'Anual' }, 
+    { name: 'intervalo', value: 'EVENTO', label: 'Evento' }, 
+    { name: 'intervalo', value: 'NAO_SE_APLICA', label: 'Não se aplica' }
   ];
 
-  const { codigo, descricao, categoria, intervalo, valorInicial, valorAtual, ativoStatus, dataCadastro } =  { ativo } ;
+  const { codigo, descricao, categoria, intervalo, valorCompra, ativoStatus, dataCadastro } =  { ativo } ;
 
   const handleInputChange = (event) => {
     let name, value;
@@ -35,7 +40,7 @@ const FormDadosGerais = (props, ativo) => {
     }
 
     switch (name) {
-      case 'valorInicial':
+      case 'valorCompra':
         if (value === '' || value.match(/^\d{1,}(\.\d{0,2})?$/)) {
           props.setAtivo((prevState) => ({
             ...prevState,
@@ -43,14 +48,6 @@ const FormDadosGerais = (props, ativo) => {
           }));
         }
         break;
-        case 'valorAtual':
-          if (value === '' || value.match(/^\d{1,}(\.\d{0,2})?$/)) {
-            props.setAtivo((prevState) => ({
-              ...prevState,
-              [name]: value
-            }));
-          }
-          break;
       default:
         props.setAtivo((prevState) => ({
           ...prevState,
@@ -62,6 +59,19 @@ const FormDadosGerais = (props, ativo) => {
   return (
     <>
       <Row>
+        {!isAcaoNovo &&
+          <Col className="pr-1" md="1">
+            <Form.Group>
+              <label>Id</label>
+              <Form.Control
+                type="text"
+                name="id"
+                value={id}
+                readOnly
+              ></Form.Control>
+            </Form.Group>
+          </Col>
+        }
         <Col className="pr-1" md="2">
           <Form.Group>
             <label>Código</label>
@@ -88,7 +98,9 @@ const FormDadosGerais = (props, ativo) => {
             ></Form.Control>
           </Form.Group>
         </Col>
-        <Col className="pl-1" md="2">
+      </Row>
+      <Row>
+        <Col className="pr-1" md="2">
           <Form.Group>
             <label>Categoria</label>
             <Select options={opcoesCategoria} 
@@ -96,65 +108,55 @@ const FormDadosGerais = (props, ativo) => {
               onChange={handleInputChange}/>
           </Form.Group>
         </Col>
-        <Col className="pl-1" md="2">
+        <Col className="pr-1" md="2">
           <Form.Group>
             <label>Intervalo de Manutenção</label>
             <Select options={opcoesIntervalo} 
               onChange={handleInputChange}/>
           </Form.Group>
         </Col>
-      </Row>
-      <Row>
         <Col className="pr-1" md="2">
           <Form.Group>
-            <label>Valor Inicial</label>
+            <label>Valor Compra</label>
             <Form.Control
-              name="valorInicial"
-              placeholder="Valor inicial"
+              name="valorCompra"
+              placeholder="Valor Compra"
               type="numeric"
-              value={valorInicial}
+              value={valorCompra}
               onChange={handleInputChange}
             ></Form.Control>
           </Form.Group>
-        </Col>
-        <Col md="2">
-          <Form.Group>
-            <label>Valor Atualizado</label>
-            <Form.Control
-              placeholder="Valor atual"
-              type="text"
-              name="valorAtual"
-              value={valorAtual}
-              onChange={handleInputChange}
-            ></Form.Control>
-          </Form.Group>
-        </Col>
-        <Col md="2">
-          <Form.Group>
-            <label>Ativo</label>
-            <Form.Control
-              placeholder="Define se o ativo está disponível para uso"
-              type="text"
-              name="ativoStatus"
-              value={ativoStatus}
-              onChange={handleInputChange}
-            ></Form.Control>
-          </Form.Group>
-        </Col>
-        <Col md="2">
-          <Form.Group>
-            <label>Data Cadastro</label>
-            <Form.Control
-              disabled
-              placeholder="Data de cadastro do ativo"
-              type="text"
-              name="dataCadastro"
-              value={dataCadastro}
-              onChange={handleInputChange}
-            ></Form.Control>
-          </Form.Group>
-        </Col>
+         </Col>
       </Row>
+      {!isAcaoNovo &&
+        <Row>
+          <Col className="pr-1" md="2">
+            <Form.Group>
+              <label>Ativo</label>
+              <Form.Control
+                placeholder="Define se o ativo está disponível para uso"
+                type="text"
+                name="ativoStatus"
+                value={ativoStatus}
+                onChange={handleInputChange}
+              ></Form.Control>
+            </Form.Group>
+          </Col>
+          <Col className="pr-1" md="2">
+            <Form.Group>
+              <label>Data Cadastro</label>
+              <Form.Control
+                disabled
+                placeholder="Data de cadastro do ativo"
+                type="text"
+                name="dataCadastro"
+                value={dataCadastro}
+                onChange={handleInputChange}
+              ></Form.Control>
+            </Form.Group>
+          </Col>
+        </Row>
+      }
     </>
   );
 }

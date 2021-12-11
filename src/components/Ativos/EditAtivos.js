@@ -13,7 +13,9 @@ import { Alert } from 'reactstrap';
 
 const EditAtivos = (props) => {
 
-  const acao = props.match.params.acao;
+  const { id } = props.match.params;
+  const history = props.history;
+  const isAcaoNovo = !id;
 
   const [redirecionar, setRedirecionar] = useState(false);
   const [exibirErro, setExibirErro] = useState(false);
@@ -48,8 +50,8 @@ const EditAtivos = (props) => {
   });
 
   useEffect(() => {
-    if (acao != 'novo') {
-        buscarAtivoPorId(acao).then(ativoBd => {
+    if (!isAcaoNovo) {
+        buscarAtivoPorId(id).then(ativoBd => {
             //const fields = ['title', 'firstName', 'lastName', 'email', 'role'];
             //fields.forEach(field => setValue(field, user[field]));
             alert(ativoBd.data);
@@ -107,7 +109,7 @@ const EditAtivos = (props) => {
           alert('Falha ao apagar');
         });
     } else {
-      setErrorMsg('Código, descrição, categoria, intervalo e valor inicial são obrigatórios');
+      setErrorMsg('Código, descrição, categoria, intervalo e valor compra são obrigatórios');
       setExibirErro(true);
     }
   };
@@ -139,15 +141,11 @@ const EditAtivos = (props) => {
             <Col md="12">
               <Card>
                 <Card.Header>
-                  {acao == 'novo' ? (
-                    <Card.Title as="h4">Adicionar Ativo</Card.Title>
-                  ) : (
-                    <Card.Title as="h4">Edição de Ativo</Card.Title>
-                  )}
+                  <Card.Title as="h4">{isAcaoNovo ? 'Adicionar Ativo' : 'Edição de Ativo'}</Card.Title>
                 </Card.Header>
                 <Card.Body>
                   <Row>
-                    <Col className="pr-1" md="12">
+                    <Col md="12">
                       <Alert 
                         color="danger"
                         isOpen={exibirErro}
@@ -157,7 +155,7 @@ const EditAtivos = (props) => {
                     </Col>
                   </Row>
                   <Form onSubmit={handleOnSubmit}>
-                    <Tabs id="uncontrolled-tab-example" className="mb-3">
+                    <Tabs id="uncontrolled-tab-example" className="mb-3 tab-ativos">
                       <Tab eventKey="gerais" title="Ativo">
                         <FormDadosGerais {...props} setAtivo={setAtivo} ativo={ativo} />
                       </Tab>
@@ -174,7 +172,7 @@ const EditAtivos = (props) => {
                               ></Form.Control>
                             </Form.Group>
                           </Col>
-                          <Col className="px-1" md="5">
+                          <Col className="pr-1" md="4">
                             <Form.Group>
                               <label>Descrição</label>
                               <Form.Control
@@ -185,7 +183,7 @@ const EditAtivos = (props) => {
                               ></Form.Control>
                             </Form.Group>
                           </Col>
-                          <Col className="pl-1" md="3">
+                          <Col className="pr-1" md="3">
                             <Form.Group>
                               <label>Valor</label>
                               <Form.Control
@@ -196,7 +194,7 @@ const EditAtivos = (props) => {
                               ></Form.Control>
                             </Form.Group>
                           </Col>
-                          <Col className="" md="1">
+                          <Col className="botao-tab" md="1">
                             <Button variant="secondary" size="sm" onClick={handleNovoParam}>Adicionar</Button>
                           </Col>
                         </Row>
@@ -216,31 +214,38 @@ const EditAtivos = (props) => {
                               </tbody>
                             </Table>
                           ) : (
+                            <Col>
                             <p className="message">Não há parâmetros cadastrados.</p>
+                            </Col>
                           )}
                         </Row>
                       </Tab>
-                      {acao != 'novo' &&
+                      {!isAcaoNovo &&
                         <Tab eventKey="manutencoes" title="Manutenções">
                           <FormAgendamentos />
                         </Tab>
                       }
                     </Tabs>
-                    <Link to="/admin/ativos/">
-                      <Button
-                        className="btn-fill pull-right"
-                        type="submit"
-                        variant="info">
-                        Voltar
-                      </Button>
-                    </Link>
-                    <Button
-                      className="btn-fill pull-right"
-                      type="submit"
-                      variant="info">
-                      Salvar
-                    </Button>
-                    <div className="clearfix"></div>
+                    <Row>
+                      <Col className="direita">
+                        <Link to="/admin/ativos/">
+                          <Button
+                            className="btn-fill pull-right"
+                            type="submit"
+                            variant="primary">
+                            Voltar
+                          </Button>
+                        </Link>
+                        <span className="separador"/>
+                        <Button
+                          className="btn-fill pull-right"
+                          type="submit"
+                          variant="primary">
+                          Salvar
+                        </Button>
+                        <div className="clearfix"></div>
+                      </Col>
+                    </Row>
                   </Form>
                 </Card.Body>
               </Card>
@@ -252,4 +257,4 @@ const EditAtivos = (props) => {
   }
 }
 
-export default EditAtivos;
+export { EditAtivos };

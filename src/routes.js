@@ -1,7 +1,6 @@
 import Dashboard from "views/Dashboard.js";
 import Ativos from "views/Ativos.js";
 import Manutencao from "views/Manutencao";
-import EditAtivos from "components/Ativos/EditAtivos.js";
 
 const dashboardRoutes = [
   {
@@ -17,15 +16,6 @@ const dashboardRoutes = [
     icon: "nc-icon nc-bus-front-12",
     component: Ativos,
     layout: "/admin",
-    exactRoute: true,
-  },
-  {
-    path: "/ativos/:acao",
-    name: "Ativos",
-    icon: "nc-icon nc-circle-09",
-    component: EditAtivos,
-    layout: "/admin",
-    redirect: true
   },
   {
     path: "/manutencao",
@@ -33,7 +23,6 @@ const dashboardRoutes = [
     icon: "nc-icon nc-settings-tool-66",
     component: Manutencao,
     layout: "/admin",
-
   },
 ];
 
