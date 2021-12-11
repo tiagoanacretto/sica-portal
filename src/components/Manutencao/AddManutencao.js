@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { Card, Container, Row, Col, Button, Form } from "react-bootstrap";
 import { Alert } from 'reactstrap';
 import Select from 'react-select';
+import Datetime from 'react-datetime';
+import moment from 'moment';
 
 import { adicionar, buscarPorId, alterar } from "./ManutencaoServices.js";
 import { buscarAtivos } from "../Ativos/AtivoServices.js";
@@ -40,6 +42,16 @@ function AddManutencao(props) {
     });
 
     if (allFieldsFilled) {
+      const copyDateRealizada = moment(manutencao.dataRealizada);
+      if (copyDateRealizada.isValid()) {
+        delete manutencao.dataRealizada;
+        manutencao.dataRealizada = copyDateRealizada.format("YYYY-MM-DDTHH:mm:ss.SSSZ");
+      } else {
+        setErrorMsg('Data deve estar no formato dd/MM/aaaa hh:mm');
+        setExibirErro(true);
+        return;
+      }
+
       let ativo = manutencao.ativo;
       delete manutencao.ativo;
       manutencao.ativo = {
@@ -103,7 +115,7 @@ function AddManutencao(props) {
             const localmanute = {
               id: manutencao.data.id,
               ativo: manutencao.data.ativo.id,
-              dataRealizada: manutencao.data.dataRealizada,
+              dataRealizada: moment(manutencao.data.dataRealizada).valueOf(),
               agendamento: manutencao.data.agendamento ? manutencao.data.agendamento : '',
               responsavel: manutencao.data.responsavel,
               observacao: manutencao.data.observacao
@@ -151,7 +163,7 @@ function AddManutencao(props) {
                       </Form.Group>
                     </Col>
                   }
-                  <Col className="pl-1" md="4">
+                  <Col className="pr-1" md="4">
                     <Form.Group>
                       <label>Ativo</label>
                       <Select options={opcoesAtivo} 
@@ -162,12 +174,12 @@ function AddManutencao(props) {
                   <Col className="pr-1" md="3">
                     <Form.Group>
                       <label>Data Manutenção</label>
-                      <Form.Control
-                        type="text"
+                      <Datetime 
+                        dateFormat="DD/MM/YYYY"
+                        timeFormat="HH:mm"
                         value={manutencao.dataRealizada}
                         onChange={e => setManutencao((prevState) => ({
-                          ...prevState, dataRealizada: e.target.value}))}
-                      ></Form.Control>
+                          ...prevState, dataRealizada: e}))} />
                     </Form.Group>
                   </Col>
                 </Row>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { Card, Container, Row, Col, Button, Table, Modal } from "react-bootstrap";
 import { Alert } from 'reactstrap';
+import moment from 'moment';
 
 import { buscarTodos, apagar } from "./ManutencaoServices.js";
 
@@ -93,7 +94,7 @@ function ListManutencoes(props) {
                       <tr key={item.id}>
                         <th scope="row">{item.id}</th>
                         <td>{item.ativoCodigo}</td>
-                        <td>{item.dataRealizada}</td>
+                        <td>{moment(item.dataRealizada).format('DD/MM/YYYY HH:mm')}</td>
                         <td>{item.responsavel}</td>
                         <td>
                           <div>
