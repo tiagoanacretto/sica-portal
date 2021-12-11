@@ -27,10 +27,9 @@ const EditAtivos = (props) => {
       codigo: props.codigo ? props.ativo.codigo : '',
       descricao: props.descricao ? props.ativo.descricao : '',
       categoria: props.categoria ? props.ativo.categoria : '',
-      intervalo: props.intervalo ? props.ativo.intervalo : {},
-      valorInicial: props.valorInicial ? props.ativo.valorInicial : '',
-      valorAtual: props.valorAtual ? props.ativo.valorAtual : '',
-      ativo: props.ativoStatus ? props.ativo.ativoStatus : '',
+      intervaloManutencao: props.intervaloManutencao ? props.ativo.intervaloManutencao : {},
+      valorCompra: props.valorInicial ? props.ativo.valorInicial : '',
+      ativoStatus: props.ativoStatus ? props.ativo.ativoStatus : '',
       dataCadastro: props.dataCadastro ? props.ativo.dataCadastro : '',
       parametros: props.parametros ? props.ativo.parametros : []
     }
@@ -50,14 +49,19 @@ const EditAtivos = (props) => {
   });
 
   useEffect(() => {
-    if (!isAcaoNovo) {
-        buscarAtivoPorId(id).then(ativoBd => {
-            //const fields = ['title', 'firstName', 'lastName', 'email', 'role'];
-            //fields.forEach(field => setValue(field, user[field]));
-            alert(ativoBd.data);
-            setAtivo(ativoBd.data);
-        });
-    }
+    const fetchData = async () => {
+      if (!isAcaoNovo) {
+          buscarAtivoPorId(id).then(ativoBd => {
+              //const fields = ['title', 'firstName', 'lastName', 'email', 'role'];
+              //fields.forEach(field => setValue(field, user[field]));
+              setAtivo(ativoBd.data);
+              //if (ativoBd.data.parametros) {
+              //  setListagemParametros(ativoBd.data.parametros);
+             // }
+          });
+      }
+    };
+    fetchData();
   }, []);
 
   const handleNovoParam = e => {
@@ -82,7 +86,7 @@ const EditAtivos = (props) => {
 
   const handleOnSubmit = (event) => {
     event.preventDefault();
-    const values = [ativo.codigo, ativo.descricao, ativo.categoria, ativo.intervalo, ativo.valorInicial];
+    const values = [ativo.codigo, ativo.descricao, ativo.categoria, ativo.intervaloManutencao, ativo.valorCompra];
 
     const allFieldsFilled = values.every((field) => {
       const value = `${field}`.trim();
@@ -92,7 +96,7 @@ const EditAtivos = (props) => {
     if (allFieldsFilled) {
       let ativoDto = deepcopy(ativo);
       ativoDto.categoria = ativoDto.categoria.value;
-      ativoDto.intervalo = ativoDto.intervalo.value;
+      ativoDto.intervaloManutencao = ativoDto.intervaloManutencao.value;
       delete ativoDto.ativo;
       delete ativoDto.dataCadastro;
       if (!listagemParametros.vazia) {
@@ -101,12 +105,12 @@ const EditAtivos = (props) => {
       
       adicionarAtivo(ativoDto)
         .then(res => {
-          alert('Sucesso ao criar');
-          setRedirecionar(true);
+          history.push(`./msg/${res.data.id}`);
         })
         .catch(err => {
-          console.log(err);
-          alert('Falha ao apagar');
+          console.error(err);
+          setErrorMsg('Erro ao salvar Ativo. Contate o administrador.');
+          setExibirErro(true);
         });
     } else {
       setErrorMsg('Código, descrição, categoria, intervalo e valor compra são obrigatórios');

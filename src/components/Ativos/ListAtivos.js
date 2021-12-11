@@ -8,11 +8,12 @@ import { buscarAtivos, deleteAtivo } from "./AtivoServices.js";
 
 import { Card, Container, Row, Col, Button, Table, Modal } from "react-bootstrap";
  
-const ListAtivos = () => {
+const ListAtivos = (props) => {
 
   const [listaAtivos, setListaAtivos] = useState([]);
   const [showModalConfirmacao, setShowModalConfirmacao] = useState(false);
   const [idAtivoDelete, setIdAtivoDelete] = useState(null);
+  const { id } = props.match.params;
 
   const [mensagem, setMensagem] = useState(() => {
     return {
@@ -27,6 +28,9 @@ const ListAtivos = () => {
     const fetchData = async () => {
       const result = await buscarAtivos();
       setListaAtivos(result.data);
+      if (id) {
+        setMensagem({exibir: true, mensagem: `Item ${id} salvo com sucesso`, icone: 'success'});
+      }
     };
     fetchData();
   }, []);

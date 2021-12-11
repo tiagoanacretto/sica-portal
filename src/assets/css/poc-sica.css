@@ -64,6 +64,25 @@
   margin-top: 32px;
 }
 
+.toggle-component .react-toggle .react-toggle-track {
+  width: 64px;
+  height: 38px;
+}
+
+.toggle-component .react-toggle .react-toggle-thumb {
+  width: 36px;
+  height: 36px;
+  border: 0px;
+}
+
+.toggle-component .react-toggle--checked .react-toggle-track {
+  background-color: #11a743;
+}
+
+.toggle-component:hover .react-toggle--checked .react-toggle-track {
+  background-color: #05440fd3;
+}
+
 @media only screen and (max-width: 500px) {
   .tit-btn-adicionar:before {
     content: '+';
