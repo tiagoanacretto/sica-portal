@@ -28,17 +28,42 @@ const FormDadosGerais = (props) => {
     { name: 'intervaloManutencao', value: 'NAO_SE_APLICA', label: 'Não se aplica' }
   ];
 
+  const getValorCategoria = () => {
+    if (typeof ativo.categoria === 'string') {
+      return opcoesCategoria.map(cat => {
+        if (cat.value == ativo.categoria) {
+          props.setAtivo((prevState) => ({
+            ...prevState,
+            categoria: cat
+          }));
+          return cat;
+        }
+      });
+    } else {
+      return ativo.categoria;
+    }
+  }
+
+  const getValorIntervaloManutencao = () => {
+    if (typeof ativo.intervaloManutencao === 'string') {
+      return opcoesIntervalo.map(intervalo => {
+        if (intervalo.value == ativo.intervaloManutencao) {
+          props.setAtivo((prevState) => ({
+            ...prevState,
+            intervaloManutencao: intervalo
+          }));
+          return intervalo;
+        }
+      });
+    } else {
+      return ativo.intervaloManutencao;
+    }
+  }
+
   let { codigo, descricao, valorCompra, statusAtivo, dataCadastro } =  ativo;
-  const categoria = opcoesCategoria.map(cat => {
-    if (cat.value == ativo.categoria) {
-      return cat;
-    }
-  });
-  const intervaloManutencao = opcoesIntervalo.map(intervalo => {
-    if (intervalo.value == ativo.intervaloManutencao) {
-      return intervalo;
-    }
-  });
+  let categoria = getValorCategoria();
+  let intervaloManutencao = getValorIntervaloManutencao();
+  
 
   const handleInputChange = (event) => {
     let name, value;
@@ -160,14 +185,12 @@ const FormDadosGerais = (props) => {
               <label>Ativo</label>
               <div className="toggle-component">
                 <Toggle
-                  inactiveLabel="Não"
-                  activeLabel="Sim"
-                  value={statusAtivo}
-                  onToggle={(value) => {
-                    statusAtivo = !value;
+                  checked={statusAtivo}
+                  onChange={(e) => {
+                    statusAtivo = e.target.checked;
                     props.setAtivo((prevState) => ({
                       ...prevState,
-                      statusAtivo: !value
+                      statusAtivo: statusAtivo
                     }));
                   }}/>
                 </div>

@@ -46,3 +46,14 @@ export const deleteAtivo = async (idAtivo) => {
   const url = `${process.env.REACT_APP_ATIVOS_SERVICE_URL}/api/ativos/${idAtivo}`;
   return axios.delete(url, request_config);
 }
+
+export const alterar = async (ativo) => {
+  const request_config = {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${getToken()}`
+    }
+  }
+  const url = `${process.env.REACT_APP_ATIVOS_SERVICE_URL}/api/ativos/${ativo.id}`
+  return axios.put(url, ativo, request_config);
+}
