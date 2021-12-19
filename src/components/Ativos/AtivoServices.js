@@ -57,3 +57,16 @@ export const alterar = async (ativo) => {
   const url = `${process.env.REACT_APP_ATIVOS_SERVICE_URL}/api/ativos/${ativo.id}`
   return axios.put(url, ativo, request_config);
 }
+
+export const buscarAgendamentos = async (idAtivo) => {
+  const request_config = {
+    headers: {
+      'Authorization': `Bearer ${getToken()}`
+    }
+  }
+  const url = `${process.env.REACT_APP_ATIVOS_SERVICE_URL}/api/ativos/${idAtivo}/agendamentos`
+  return axios.get(
+    url,
+    request_config
+  );
+}

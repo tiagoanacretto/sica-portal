@@ -17,12 +17,7 @@ import {
 } from "react-bootstrap";
 
 const FormAgendamentos = (props) => {
-  const opcoesStatus = [
-    { value: 'AGENDADA', label: 'Agendada' },
-    { value: 'REALIZADA', label: 'Realizada' },
-    { value: 'CANCELADA', label: 'Cancelada' }
-  ]
-  
+ 
   const [dataSelecionada, setDataSelecionada] = useState({});
 
   const handleInputChange = e => {

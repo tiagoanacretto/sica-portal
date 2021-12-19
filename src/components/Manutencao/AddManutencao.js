@@ -7,7 +7,7 @@ import Datetime from 'react-datetime';
 import moment from 'moment';
 
 import { adicionar, buscarPorId, alterar } from "./ManutencaoServices.js";
-import { buscarAtivos } from "../Ativos/AtivoServices.js";
+import { buscarAtivos, buscarAgendamentos } from "../Ativos/AtivoServices.js";
 
 function AddManutencao(props) {
 
@@ -19,6 +19,8 @@ function AddManutencao(props) {
   const [errorMsg, setErrorMsg] = useState('');
   const fecharErro = () => { setExibirErro(false) };
   const [ativoSelecionado, setAtivoSelecionado] = useState({});
+  const [agendamentos, setAgendamentos] = useState([]);
+  const [agendamentoSelecionado, setAgendamentoSelecionado] = useState({});
 
   const [opcoesAtivo, setOpcoesAtivo] = useState([]);
 
@@ -92,6 +94,17 @@ function AddManutencao(props) {
     setAtivoSelecionado(event);
     setManutencao((prevState) => ({
       ...prevState, ativo: event.value}))
+    buscarAgendamentos(event.value).then(agendamentos => {
+      setAgendamentos(agendamentos.data.map(agenda => {
+        return  { name: 'agendamento', value: agenda.id, label: `${agenda.id} - ${agenda.dataAgendada}` };
+      }))
+    });
+  }
+
+  const handleAgendamentoChange = e => {
+    setAgendamentoSelecionado(e);
+    setManutencao((prevState) => ({
+      ...prevState, agendamento: {id: e.value}}))
   }
 
   const carregarSelectAtivos = async (idAtivo) => {
@@ -187,12 +200,9 @@ function AddManutencao(props) {
                   <Col className="pr-1" md="3">
                     <Form.Group>
                       <label>Agendamento</label>
-                      <Form.Control
-                        type="text"
-                        value={manutencao.agendamento}
-                        onChange={e => setManutencao((prevState) => ({
-                          ...prevState, agendamento: e.target.value}))}
-                      ></Form.Control>
+                      <Select options={agendamentos}
+                        value={agendamentoSelecionado}
+                        onChange={handleAgendamentoChange}/>
                     </Form.Group>
                   </Col>
                   <Col className="pr-1" md="3">
