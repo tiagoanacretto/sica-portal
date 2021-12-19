@@ -37,7 +37,7 @@ export const buscarPorId = async (idManutencao) => {
   return axios.get(
     url,
     request_config
-  ); 
+  );
 }
 
 export const apagar = async (idManutencao) => {
@@ -59,4 +59,18 @@ export const alterar = async (manutencao) => {
   }
   const url = `${process.env.REACT_APP_ATIVOS_SERVICE_URL}/api/manutencoes/${manutencao.id}`
   return axios.put(url, manutencao, request_config);
+}
+
+export const dataManutencaoDisponivel = async (tipo) => {
+  const request_config = {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${getToken()}`
+    }
+  }
+  const url = `${process.env.REACT_APP_ATIVOS_SERVICE_URL}/api/manutencoes/disponiveis/${tipo}`;
+  return axios.get(
+    url,
+    request_config
+  );
 }

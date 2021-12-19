@@ -90,7 +90,7 @@ function ListManutencoes(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    {manutencoes.map(item =>                       
+                    {manutencoes.map(item =>
                       <tr key={item.id}>
                         <th scope="row">{item.id}</th>
                         <td>{item.ativoCodigo}</td>

@@ -84,6 +84,12 @@ const FormDadosGerais = (props) => {
           }));
         }
         break;
+      case 'categoria':
+        props.carregarOpcoesData(value.value);
+        props.setAtivo((prevState) => ({
+          ...prevState,
+          [name]: value
+        }));
       default:
         props.setAtivo((prevState) => ({
           ...prevState,

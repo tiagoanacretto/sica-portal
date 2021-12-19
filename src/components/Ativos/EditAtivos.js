@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import deepcopy from "deepcopy";
-import { Redirect } from 'react-router';
 import { Link } from "react-router-dom";
 
 import FormAgendamentos from 'components/Ativos/FormAgendamentos.js';
 import FormDadosGerais from 'components/Ativos/FormDadosGerais.js';
 
 import { adicionarAtivo, buscarAtivoPorId, alterar } from './AtivoServices.js';
+import { dataManutencaoDisponivel } from '../Manutencao/ManutencaoServices';
 
 import { Button, Card, Form, Container, Row, Col, Tabs, Tab, Table } from "react-bootstrap";
 import { Alert } from 'reactstrap';
@@ -34,6 +34,9 @@ const EditAtivos = (props) => {
     }
   });
   const [listagemParametros, setListagemParametros] = useState([]);
+  const [listagemAgendamentos, setListagemAgendamentos] = useState([]);
+  const [opcoesData, setOpcoesData] = useState([]);
+  const [dataSelecionada, setDataSelecionada] = useState({});
   const [parametroEdicao, setParametroEdicao] = useState(() => {
     return {
       nome: props.nome ? props.parametroEdicao.nome : '',
@@ -45,16 +48,30 @@ const EditAtivos = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       if (!isAcaoNovo) {
-          buscarAtivoPorId(id).then(ativoBd => {
-              setAtivo(ativoBd.data);
-              if (ativoBd.data.parametros) {
-                setListagemParametros(ativoBd.data.parametros);
-              }
-          });
+        buscarAtivoPorId(id).then(ativoBd => {
+            setAtivo(ativoBd.data);
+            if (ativoBd.data.parametros) {
+              setListagemParametros(ativoBd.data.parametros);
+            }
+            if (ativoBd.data.agendamentos) {
+              setListagemAgendamentos(ativoBd.data.agendamentos);
+            }
+            carregarOpcoesData(ativoBd.data.categoria);
+        });
       }
     };
     fetchData();
   }, []);
+
+  const carregarOpcoesData = (categoria) => {
+    dataManutencaoDisponivel(categoria).then(datasDisponiveis => {
+      setOpcoesData(
+        datasDisponiveis.data.map(data => {
+          return  { name: 'opcaoData', value: data, label: data };
+        })
+      );
+    });
+  }
 
   const handleNovoParam = e => {
     e.preventDefault();
@@ -87,7 +104,6 @@ const EditAtivos = (props) => {
       ativoDto.categoria = ativoDto.categoria.value;
       ativoDto.intervaloManutencao = ativoDto.intervaloManutencao.value;
 
-      alert('dentro if: ' +  listagemParametros);
       ativoDto.parametros = listagemParametros;
       
       if (isAcaoNovo) {
@@ -103,7 +119,9 @@ const EditAtivos = (props) => {
             setExibirErro(true);
           });
       } else {
-        if (ativoDto.agendamentos && !ativoDto.agendamentos.length) {
+        if (listagemAgendamentos && listagemAgendamentos.length) {
+          ativoDto.agendamentos = listagemAgendamentos
+        } else {        
           delete ativoDto.agendamentos
         }
         if (ativoDto.parametros && !ativoDto.parametros.length) {
@@ -171,7 +189,7 @@ const EditAtivos = (props) => {
                 <Form onSubmit={handleOnSubmit}>
                   <Tabs id="uncontrolled-tab-example" className="mb-3 tab-ativos">
                     <Tab eventKey="gerais" title="Ativo">
-                      <FormDadosGerais {...props} setAtivo={setAtivo} ativo={ativo} />
+                      <FormDadosGerais {...props} setAtivo={setAtivo} ativo={ativo} carregarOpcoesData={carregarOpcoesData} />
                     </Tab>
                     <Tab eventKey="parametros" title="Parâmetros">
                       <Row>
@@ -230,8 +248,14 @@ const EditAtivos = (props) => {
                       </Row>
                     </Tab>
                     {!isAcaoNovo &&
-                      <Tab eventKey="manutencoes" title="Manutenções">
-                        <FormAgendamentos />
+                      <Tab eventKey="agendamentos" title="Agendamentos">
+                        <FormAgendamentos {...props} 
+                          setListagemAgendamentos={setListagemAgendamentos} listagemAgendamentos={listagemAgendamentos}
+                          exibirErro={exibirErro} setExibirErro={setExibirErro}
+                          errorMsg={errorMsg} setErrorMsg={setErrorMsg}
+                          fecharErro={fecharErro} opcoesData={opcoesData}
+                          setOpcoesData={setOpcoesData} dataSelecionada={dataSelecionada}
+                          setDataSelecionada={setDataSelecionada} />
                       </Tab>
                     }
                   </Tabs>
