@@ -135,6 +135,15 @@ function AddManutencao(props) {
             }
             setManutencao(localmanute);
             carregarSelectAtivos(localmanute.ativo);
+            buscarAgendamentos(localmanute.ativo).then(agendamentos => {
+              setAgendamentos(agendamentos.data.map(agenda => {
+                const agendamento = { name: 'agendamento', value: agenda.id, label: `${agenda.id} - ${agenda.dataAgendada}` };
+                if (localmanute.agendamento && localmanute.agendamento.id == agenda.id) {
+                  setAgendamentoSelecionado(agendamento);
+                }
+                return  agendamento;
+              }))
+            });
           });
       } else {
         carregarSelectAtivos(null);
