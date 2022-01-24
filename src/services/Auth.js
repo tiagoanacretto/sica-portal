@@ -24,7 +24,7 @@ export const getToken = () => {
 }
 
 const chamarLogin = async (loginDto) => {
-  return fetch('http://localhost:8081/auth/signin', {
+  return fetch(`${process.env.REACT_APP_AUTH_SERVICE_URL}/auth/signin`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
