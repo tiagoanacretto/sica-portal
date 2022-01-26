@@ -26,5 +26,5 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
       - run: |
           docker build -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/sica-portal .
-          docker tag ${{ secrets.REGISTRY_LOGIN_SERVER }}/sica-portal:latest ${{ secrets.REGISTRY_LOGIN_SERVER }}/sica-ativos-service:${{ github.sha }}
+          docker tag ${{ secrets.REGISTRY_LOGIN_SERVER }}/sica-portal:latest ${{ secrets.REGISTRY_LOGIN_SERVER }}/sica-portal:${{ github.sha }}
           docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/sica-portal:${{ github.sha }}
